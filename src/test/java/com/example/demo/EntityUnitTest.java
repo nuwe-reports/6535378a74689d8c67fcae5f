@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -20,16 +21,16 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import com.example.demo.entities.*;
 
 @DataJpaTest
-@AutoConfigureTestDatabase(replace=Replace.NONE)
+@AutoConfigureTestDatabase(replace = Replace.NONE)
 @TestInstance(Lifecycle.PER_CLASS)
 class EntityUnitTest {
 
-	@Autowired
-	private TestEntityManager entityManager;
+    @Autowired
+    private TestEntityManager entityManager;
 
-	private Doctor d1;
+    private Doctor d1;
 
-	private Patient p1;
+    private Patient p1;
 
     private Room r1;
 
@@ -47,4 +48,35 @@ class EntityUnitTest {
         a2 = new Appointment(p1, d1, r1, LocalDateTime.of(2023, 4, 24, 10, 30), LocalDateTime.of(2023, 4, 24, 11, 30));
         a3 = new Appointment(p1, d1, r1, LocalDateTime.of(2023, 4, 24, 11, 30), LocalDateTime.of(2023, 4, 24, 12, 30));
     }
+
+    @Test
+    void testDoctorEntity() {
+        entityManager.persistAndFlush(d1);
+        Doctor foundDoctor = entityManager.find(Doctor.class, d1.getId());
+        assertEquals(d1.getFirstName(), foundDoctor.getFirstName());
+        assertEquals(d1.getLastName(), foundDoctor.getLastName());
+        assertEquals(d1.getAge(), foundDoctor.getAge());
+        assertEquals(d1.getEmail(), foundDoctor.getEmail());
+
+    }
+
+    @Test
+    void testPatientEntity() {
+        entityManager.persistAndFlush(p1);
+        Patient foundPatient = entityManager.find(Patient.class, p1.getId());
+        assertEquals(p1.getFirstName(), foundPatient.getFirstName());
+        assertEquals(p1.getLastName(), foundPatient.getLastName());
+        assertEquals(p1.getAge(), foundPatient.getAge());
+        assertEquals(p1.getEmail(), foundPatient.getEmail());
+
+    }
+
+    @Test
+    void testRoomEntity() {
+        entityManager.persistAndFlush(r1);
+        Room foundRoom = entityManager.find(Room.class, r1.getRoomName());
+        assertEquals(r1.getRoomName(), foundRoom.getRoomName());
+
+    }
+
 }
