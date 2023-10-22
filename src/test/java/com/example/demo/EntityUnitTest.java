@@ -1,24 +1,22 @@
 package com.example.demo;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
+import com.example.demo.entities.Appointment;
+import com.example.demo.entities.Doctor;
+import com.example.demo.entities.Patient;
+import com.example.demo.entities.Room;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.context.junit4.SpringRunner;
-
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
-import com.example.demo.entities.*;
+import java.time.LocalDateTime;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
@@ -77,6 +75,42 @@ class EntityUnitTest {
         Room foundRoom = entityManager.find(Room.class, r1.getRoomName());
         assertEquals(r1.getRoomName(), foundRoom.getRoomName());
 
+    }
+
+    @Test
+    void testAppointmentInitialization() {
+        entityManager.persistAndFlush(a1);
+        Appointment foundAppointment = entityManager.find(Appointment.class, a1.getId());
+        assertEquals(a1.getStartsAt(), foundAppointment.getStartsAt());
+        assertEquals(a1.getFinishesAt(), foundAppointment.getFinishesAt());
+        assertEquals(a1.getDoctor(), foundAppointment.getDoctor());
+        assertEquals(a1.getPatient(), foundAppointment.getPatient());
+        assertEquals(a1.getRoom(), foundAppointment.getRoom());
+
+    }
+
+    @Test
+    void testAppointmentOverlaps() {
+        assertTrue(a1.overlaps(a2));
+        assertTrue(a2.overlaps(a3));
+        assertFalse(a1.overlaps(a3));
+
+    }
+
+    @Test
+    void testGettersAndSetters() {
+        Appointment appointment = new Appointment();
+        appointment.setDoctor(d1);
+        appointment.setPatient(p1);
+        appointment.setRoom(r1);
+        appointment.setStartsAt(LocalDateTime.of(2023, 4, 24, 9, 30));
+        appointment.setFinishesAt(LocalDateTime.of(2023, 4, 24, 10, 30));
+
+        assertEquals(d1, appointment.getDoctor());
+        assertEquals(p1, appointment.getPatient());
+        assertEquals(r1, appointment.getRoom());
+        assertEquals(LocalDateTime.of(2023, 4, 24, 0, 30), appointment.getStartsAt());
+        assertEquals(LocalDateTime.of(2023, 4, 24, 10, 30), appointment.getFinishesAt());
     }
 
 }
