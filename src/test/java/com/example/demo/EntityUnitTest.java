@@ -42,9 +42,9 @@ class EntityUnitTest {
         p1 = new Patient("Jane", "Doe", 25, "jane.doe@example.com");
         r1 = new Room("Room A");
 
-        a1 = new Appointment(p1, d1, r1, LocalDateTime.of(2023, 4, 24, 9, 30), LocalDateTime.of(2023, 4, 24, 10, 30));
+        a1 = new Appointment(p1, d1, r1, LocalDateTime.of(2023, 4, 24, 9, 30), LocalDateTime.of(2023, 4, 24, 10, 45));
         a2 = new Appointment(p1, d1, r1, LocalDateTime.of(2023, 4, 24, 10, 30), LocalDateTime.of(2023, 4, 24, 11, 30));
-        a3 = new Appointment(p1, d1, r1, LocalDateTime.of(2023, 4, 24, 11, 30), LocalDateTime.of(2023, 4, 24, 12, 30));
+        a3 = new Appointment(p1, d1, r1, LocalDateTime.of(2023, 4, 24, 11, 15), LocalDateTime.of(2023, 4, 24, 12, 30));
     }
 
     @Test
@@ -109,7 +109,7 @@ class EntityUnitTest {
         assertEquals(d1, appointment.getDoctor());
         assertEquals(p1, appointment.getPatient());
         assertEquals(r1, appointment.getRoom());
-        assertEquals(LocalDateTime.of(2023, 4, 24, 0, 30), appointment.getStartsAt());
+        assertEquals(LocalDateTime.of(2023, 4, 24, 9, 30), appointment.getStartsAt());
         assertEquals(LocalDateTime.of(2023, 4, 24, 10, 30), appointment.getFinishesAt());
     }
 
