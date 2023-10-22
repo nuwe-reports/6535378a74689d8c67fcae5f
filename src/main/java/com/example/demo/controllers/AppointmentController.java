@@ -57,8 +57,21 @@ public class AppointmentController {
         if (appointment.getStartsAt().isAfter(appointment.getFinishesAt()) || appointment.getStartsAt().isEqual(appointment.getFinishesAt())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        
 
+        // Temporal overlap with other appointments
+        List<Appointment> existingAppointments = appointmentRepository.findAll();
+        for (Appointment existingAppointment : existingAppointments) {
+            if (existingAppointment.overlaps(appointment)) {
+                return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+            }
+        }
+
+        // If no conflicts, we save the new appointment in the database
+        Appointment savedAppointment = appointmentRepository.save(appointment);
+
+        // Existing appointment list update and returned as response
+        existingAppointments.add(savedAppointment);
+        return new ResponseEntity<>(existingAppointments, HttpStatus.OK);
     }
 
 
